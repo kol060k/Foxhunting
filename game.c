@@ -5,7 +5,7 @@
 void init_game(int *p1[10][10], int *p2[10][10], int *a[10][10])  // Initialize game fields, tree and fox positions
 	// p1 - field with AI foxes for player;  p2 - massive with player's foxes for player;
 	// a - field for AI algorithm
-	// 0 - number for empty position, -1 - fox position, -2 - tree posotoin
+	// 0 - number for empty position, -1 - fox position, -2 - tree position, -3 - fox body position
 {
 	int i, j, tree_numb, x, y;
 	for (i = 0; i < 10; i++)
@@ -44,7 +44,7 @@ int main()
 {
 	int p1[10][10], p2[10][10], a[10][10];
 	init_game(&p1, &p2, &a);
-	int i, j;
+	int i, j, move_numb = 0;  // move_numb - number of moves have done since game starting
 	for (i = 0; i < 10; i++)
 	{
 		for (j = 0; j < 10; j++)
