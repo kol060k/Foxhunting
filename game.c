@@ -260,7 +260,7 @@ void print(int p1[10][10], int p2[10][10])  // Printing of fields
 			switch (x)
 			{
 			case -1:
-				printf(" F");  // Hide opponent's foxes
+				printf(" .");  // Hide opponent's foxes
 				break;
 			case -2:
 				printf(" T");
