@@ -130,7 +130,7 @@ void add_value_a(int p2[10][10], int a[10][10], int m, int n)  // Add numbers to
 {
 	int i, j, val;
 	val = find_fox(p2, m, n);
-	a[m][n] = a[m][n] + val;
+	a[m][n] = -10;  // We can't shoot to this cell again, so just never look at it again
 	for (i = m - 1; i >= 0; i--)  // Going up
 	{
 		if (a[i][n] == -2) break;
@@ -173,7 +173,7 @@ void add_value_a(int p2[10][10], int a[10][10], int m, int n)  // Add numbers to
 	}
 }
 
-int random_shoot(int p2[10][10], int a[10][10], int p_foxleft)  // Starting random AI shoot
+int random_shoot(int p2[10][10], int a[10][10], int p_foxleft)  // Starting random AI shots
 {
 	int m, n, right_shot = 0;  // m, n - numbers of string and column; right_shot - checker if shot correct
 	while (right_shot == 0)
@@ -190,16 +190,56 @@ int random_shoot(int p2[10][10], int a[10][10], int p_foxleft)  // Starting rand
 	}
 	else
 	{
+		a[m][n] = -10;
 		p2[m][n] = -3;
 		p_foxleft--;
 	}
 	if (p2[m][n] == 0) p2[m][n] = -10;  // If there is no one foxes in string, column and diagonals, we still need to mark the cell that player shooted here
+	printf("AI shot.\n");
+	printf("String: %d\n", m + 1);
+	printf("Column: %d\n", n + 1);
 	return p_foxleft;
 }
 
-int AI_shoot(int p2[10][10], int a[10][10], int p_foxleft)  // Function works with AI shoot
+int AI_shoot(int p2[10][10], int a[10][10], int p_foxleft)  // Function works with AI shots
+// AI finds the cells with biggest numbers in array a (biggest numbers means bigest chance of fox there) and shoot to random biggest cell
 {
-
+	int cells[2][100];  // Array with biggest cells. cells[0][i] = m, cells[1][i] = n
+	int max = 0, numb = 0, shoot_cell, i, j, m, n;  // max - maximal cell value in array a, numb - number of biggest cells, shoot_cell - cell, chosen for shoot
+	for (i = 0; i < 10; i++)
+		for (j = 0; j < 10; j++)
+			if (a[i][j] >= 0)
+				if (a[i][j] > max)
+				{
+					numb = 1;
+					max = a[i][j];
+					cells[0][0] = i;
+					cells[1][0] = j;
+				}
+				else if (a[i][j] == max)
+				{
+					cells[0][numb] = i;
+					cells[1][numb] = j;
+					numb++;
+				}
+	shoot_cell = rand() % numb;
+	m = cells[0][shoot_cell];
+	n = cells[1][shoot_cell];
+	if (p2[m][n] == -1)
+	{
+		a[m][n] = -10;
+		p_foxleft--;
+		p2[m][n] = -3;
+	}
+	else
+	{
+		p2[m][n] = find_fox(p2, m, n);
+		add_value_a(p2, a, m, n);
+	}
+	if (p2[m][n] == 0) p2[m][n] = -10;  // If there is no one foxes in string, column and diagonals, we still need to mark the cell that player shooted here
+	printf("AI shot.\n");
+	printf("String: %d\n", m + 1);
+	printf("Column: %d\n", n + 1);
 	return p_foxleft;
 }
 
