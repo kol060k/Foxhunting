@@ -345,7 +345,7 @@ int main()
 			p_foxleft = random_shoot(p2, a, p_foxleft);
 		else
 			p_foxleft = AI_shoot(p2, a, p_foxleft);
-		print(a, p2);
+		print(p1, p2);
 		while ((p_foxleft < p_foxleft1) && (p_foxleft > 0))  // If fox killed, repeat move
 		{
 			p_foxleft1 = p_foxleft;
@@ -353,7 +353,7 @@ int main()
 				p_foxleft = random_shoot(p2, a, p_foxleft);
 			else
 				p_foxleft = AI_shoot(p2, a, p_foxleft);
-			print(a, p2);
+			print(p1, p2);
 		}
 		if (beg_shots < 3) beg_shots++;
 		if (p_foxleft == 0)  // Check fox number. Finish the game if it = 0
