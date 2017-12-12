@@ -3,9 +3,9 @@
 #include <time.h>
 
 void init_game(int p1[10][10], int p2[10][10], int a[10][10])  // Initialize game fields, tree and fox positions
-	// p1 - field with AI foxes for player;  p2 - massive with player's foxes for player;
-	// a - field for AI algorithm
-	// 0 - number for empty position, -1 - fox position, -2 - tree position, -3 - fox body position
+															   // p1 - field with AI foxes for player;  p2 - massive with player's foxes for player;
+															   // a - field for AI algorithm
+															   // 0 - number for empty position, -1 - fox position, -2 - tree position, -3 - fox body position, -4 - the same as dead fox, but it's no need to count it anymore
 {
 	int i, j, tree_numb, x, y;
 	for (i = 0; i < 10; i++)
@@ -87,7 +87,7 @@ int find_fox(int p[10][10], int m, int n)  // Function of searching foxes in str
 int player_move(int p1[10][10], int a_foxleft)  // Function that works with player's turn
 {
 	int m = 0, n = 0, right_shot = 0;  // m, n - numbers of string and column; right_shot - checker if shot correct
-	///////// Scan player's shot
+									   ///////// Scan player's shot
 	while (right_shot == 0)
 	{
 		printf("Enter coordinates, please.\n");
@@ -134,42 +134,58 @@ void add_value_a(int p2[10][10], int a[10][10], int m, int n)  // Add numbers to
 	for (i = m - 1; i >= 0; i--)  // Going up
 	{
 		if (a[i][n] == -2) break;
-		if (a[i][n] >= 0) a[i][n] = a[i][n] + val;
+		if (val > 0)
+			if (a[i][n] >= 0) a[i][n] = a[i][n] + val;
+			else a[i][n] = -10;  // No need to shoot to these string, column and diagonals in there are no foxes
 	}
 	for (i = m + 1; i < 10; i++)  // Going down
 	{
 		if (a[i][n] == -2) break;
-		if (a[i][n] >= 0) a[i][n] = a[i][n] + val;
+		if (val > 0)
+			if (a[i][n] >= 0) a[i][n] = a[i][n] + val;
+			else a[i][n] = -10;
 	}
 	for (j = n - 1; j >= 0; j--)  // Going left
 	{
 		if (a[m][j] == -2) break;
-		if (a[m][j] >= 0) a[m][j] = a[m][j] + val;
+		if (val > 0)
+			if (a[m][j] >= 0) a[m][j] = a[m][j] + val;
+			else a[m][j] = -10;
 	}
 	for (j = n + 1; j < 10; j++)  // Going right
 	{
 		if (a[m][j] == -2) break;
-		if (a[m][j] >= 0) a[m][j] = a[m][j] + val;
+		if (val > 0)
+			if (a[m][j] >= 0) a[m][j] = a[m][j] + val;
+			else a[m][j] = -10;
 	}
 	for (i = m - 1, j = n - 1; (i >= 0) && (j >= 0); i--, j--)  // Going up and left
 	{
 		if (a[i][j] == -2) break;
-		if (a[i][j] >= 0) a[i][j] = a[i][j] + val;
+		if (val > 0)
+			if (a[i][j] >= 0) a[i][j] = a[i][j] + val;
+			else a[i][j] = -10;
 	}
 	for (i = m + 1, j = n - 1; (i < 10) && (j >= 0); i++, j--)  // Going down and left
 	{
 		if (a[i][j] == -2) break;
-		if (a[i][j] >= 0) a[i][j] = a[i][j] + val;
+		if (val > 0)
+			if (a[i][j] >= 0) a[i][j] = a[i][j] + val;
+			else a[i][j] = -10;
 	}
 	for (i = m - 1, j = n + 1; (i >= 0) && (j < 10); i--, j++)  // Going up and right
 	{
 		if (a[i][j] == -2) break;
-		if (a[i][j] >= 0) a[i][j] = a[i][j] + val;
+		if (val > 0)
+			if (a[i][j] >= 0) a[i][j] = a[i][j] + val;
+			else a[i][j] = -10;
 	}
 	for (i = m + 1, j = n + 1; (i < 10) && (j < 10); i++, j++)  // Going down and right
 	{
 		if (a[i][j] == -2) break;
-		if (a[i][j] >= 0) a[i][j] = a[i][j] + val;
+		if (val > 0)
+			if (a[i][j] >= 0) a[i][j] = a[i][j] + val;
+			else a[i][j] = -10;
 	}
 }
 
@@ -202,7 +218,7 @@ int random_shoot(int p2[10][10], int a[10][10], int p_foxleft)  // Starting rand
 }
 
 int AI_shoot(int p2[10][10], int a[10][10], int p_foxleft)  // Function works with AI shots
-// AI finds the cells with biggest numbers in array a (biggest numbers means bigest chance of fox there) and shoot to random biggest cell
+															// AI finds the cells with biggest numbers in array a (biggest numbers means bigest chance of fox there) and shoot to random biggest cell
 {
 	int cells[2][100];  // Array with biggest cells. cells[0][i] = m, cells[1][i] = n
 	int max = 0, numb = 0, shoot_cell, i, j, m, n;  // max - maximal cell value in array a, numb - number of biggest cells, shoot_cell - cell, chosen for shoot
@@ -245,7 +261,7 @@ int AI_shoot(int p2[10][10], int a[10][10], int p_foxleft)  // Function works wi
 
 
 void print(int p1[10][10], int p2[10][10])  // Printing of fields
-// F - Fox, T - Tree, X - fox body, . - closed cell, 0 - 10 - number of foxes in string, column and diagonals
+											// F - Fox, T - Tree, X - fox body, . - closed cell, 0 - 10 - number of foxes in string, column and diagonals
 {
 	int i, j, x;
 	printf("Opponent:                   You:\n");
@@ -296,6 +312,9 @@ void print(int p1[10][10], int p2[10][10])  // Printing of fields
 			case -3:
 				printf(" X");
 				break;
+			case -4:
+				printf(" X");
+				break;
 			case -10:
 				printf(" 0");
 				break;
@@ -318,6 +337,7 @@ int main()
 	init_game(p1, p2, a);
 	int move_numb = 0, beg_shots = 0;  // move_numb - number of moves have done since game starting, beg_shots - number of random shots AI did at the beginning
 	int p_foxleft = 10, p_foxleft1 = 10, a_foxleft = 10, a_foxleft1 = 10;  // Number of player's/AI foxes left 
+	int i, j;
 	printf("Battle begins!\n");
 	print(p1, p2);
 
@@ -345,7 +365,7 @@ int main()
 			p_foxleft = random_shoot(p2, a, p_foxleft);
 		else
 			p_foxleft = AI_shoot(p2, a, p_foxleft);
-		print(p1, p2);
+		print(a, p2);
 		while ((p_foxleft < p_foxleft1) && (p_foxleft > 0))  // If fox killed, repeat move
 		{
 			p_foxleft1 = p_foxleft;
@@ -353,7 +373,7 @@ int main()
 				p_foxleft = random_shoot(p2, a, p_foxleft);
 			else
 				p_foxleft = AI_shoot(p2, a, p_foxleft);
-			print(p1, p2);
+			print(a, p2);
 		}
 		if (beg_shots < 3) beg_shots++;
 		if (p_foxleft == 0)  // Check fox number. Finish the game if it = 0
@@ -363,7 +383,21 @@ int main()
 			printf("AI has become smarter than man!\n");
 			printf("The enslavement of mankind began...\n");
 			break;
-		} 
+		}
+		move_numb++;
+		printf("	You have %d foxes alive.\n", p_foxleft);
+		printf("	AI have %d foxes alive.\n", a_foxleft);
+
+		if (move_numb % 12 == 0)
+		{
+			for (i = 0; i < 10; i++)
+				for (j = 0; j < 10; j++)
+				{
+					if (a[i][j] > 0) a[i][j] = 0;  // Let's try to clear AI working array sometimes, because after big number of turns algorithm works bad
+					if (p2[i][j] == -3) p2[i][j] = -4;  // The same as dead fox, but it's no need to count it anymore
+				}
+			beg_shots = 0;  // Start again from the beginning
+		}
 	}
 	return 0;
 }
