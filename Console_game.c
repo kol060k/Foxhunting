@@ -3,14 +3,14 @@
 #include <time.h>
 
 int p1[10][10], p2[10][10], a[10][10];
-					// p1 - field with AI foxes for player;  p2 - massive with player's foxes for player;
-					// a - field for AI algorithm
+// p1 - field with AI foxes for player;  p2 - massive with player's foxes for player;
+// a - field for AI algorithm
 int fox_number = 10, tree_number = 0;  // Number of foxes and trees in game
 
 void init_game()  // Initialize game fields, tree and fox positions
-	// p1 - field with AI foxes for player;  p2 - massive with player's foxes for player;
-	// a - field for AI algorithm
-	// 0 - number for empty position, -1 - fox position, -2 - tree position, -3 - fox body position
+				  // p1 - field with AI foxes for player;  p2 - massive with player's foxes for player;
+				  // a - field for AI algorithm
+				  // 0 - number for empty position, -1 - fox position, -2 - tree position, -3 - fox body position
 {
 	int i, j, x, y;
 	for (i = 0; i < 10; i++)
@@ -43,48 +43,58 @@ void init_game()  // Initialize game fields, tree and fox positions
 	}
 }
 
-int find_fox(int p[10][10], int m, int n)  // Function of searching foxes in strings, columns and diagonals
+int find_fox(int p[10][10], int m, int n, int setting)  // Function of searching foxes in strings, columns and diagonals
+	// if (setting == -3) then we count dead foxes
+	// else we don't count
 {
 	int numb = 0, i, j;
 	for (i = m - 1; i >= 0; i--)  // Going up
 	{
 		if (p[i][n] == -2) break;
 		if (p[i][n] == -1) numb++;
+		if ((p[i][n] == -3) && (setting == -3)) numb++;
 	}
 	for (i = m + 1; i < 10; i++)  // Going down
 	{
 		if (p[i][n] == -2) break;
 		if (p[i][n] == -1) numb++;
+		if ((p[i][n] == -3) && (setting == -3)) numb++;
 	}
 	for (j = n - 1; j >= 0; j--)  // Going left
 	{
 		if (p[m][j] == -2) break;
 		if (p[m][j] == -1) numb++;
+		if ((p[m][j] == -3) && (setting == -3)) numb++;
 	}
 	for (j = n + 1; j < 10; j++)  // Going right
 	{
 		if (p[m][j] == -2) break;
 		if (p[m][j] == -1) numb++;
+		if ((p[m][j] == -3) && (setting == -3)) numb++;
 	}
 	for (i = m - 1, j = n - 1; (i >= 0) && (j >= 0); i--, j--)  // Going up and left
 	{
 		if (p[i][j] == -2) break;
 		if (p[i][j] == -1) numb++;
+		if ((p[i][j] == -3) && (setting == -3)) numb++;
 	}
 	for (i = m + 1, j = n - 1; (i < 10) && (j >= 0); i++, j--)  // Going down and left
 	{
 		if (p[i][j] == -2) break;
 		if (p[i][j] == -1) numb++;
+		if ((p[i][j] == -3) && (setting == -3)) numb++;
 	}
 	for (i = m - 1, j = n + 1; (i >= 0) && (j < 10); i--, j++)  // Going up and right
 	{
 		if (p[i][j] == -2) break;
 		if (p[i][j] == -1) numb++;
+		if ((p[i][j] == -3) && (setting == -3)) numb++;
 	}
 	for (i = m + 1, j = n + 1; (i < 10) && (j < 10); i++, j++)  // Going down and right
 	{
 		if (p[i][j] == -2) break;
 		if (p[i][j] == -1) numb++;
+		if ((p[i][j] == -3) && (setting == -3)) numb++;
 	}
 	return numb;
 }
@@ -121,7 +131,7 @@ int player_move(int a_foxleft)  // Function that works with player's turn
 	m--;
 
 	///////// Shooting
-	if (p1[m][n] == 0) p1[m][n] = find_fox(p1, m, n);
+	if (p1[m][n] == 0) p1[m][n] = find_fox(p1, m, n, -3);
 	else
 	{
 		p1[m][n] = -3;
@@ -142,7 +152,7 @@ int add_value_a_1(int cell, int val)  // Add value to 1 cell
 void add_value_a(int m, int n)  // Add numbers to array a (need to algorithm)
 {
 	int i, j, val;
-	val = find_fox(p2, m, n);
+	val = find_fox(p2, m, n, 0);
 	if (a[m][n] == -1) val = -1;
 	a[m][n] = -10;  // We can't shoot to this cell again, so just never look at it again
 	for (i = m - 1; i >= 0; i--)  // Going up
@@ -199,7 +209,7 @@ int random_shoot(int p_foxleft)  // Starting random AI shots
 	}
 	if (p2[m][n] == 0)
 	{
-		p2[m][n] = find_fox(p2, m, n);
+		p2[m][n] = find_fox(p2, m, n, -3);
 		add_value_a(m, n);
 	}
 	else
@@ -216,7 +226,7 @@ int random_shoot(int p_foxleft)  // Starting random AI shots
 }
 
 int AI_shoot(int p_foxleft)  // Function works with AI shots
-// AI finds the cells with biggest numbers in array a (biggest numbers means bigest chance of fox there) and shoot to random biggest cell
+							 // AI finds the cells with biggest numbers in array a (biggest numbers means bigest chance of fox there) and shoot to random biggest cell
 {
 	int cells[2][100];  // Array with biggest cells. cells[0][i] = m, cells[1][i] = n
 	int max = 0, numb = 0, shoot_cell, i, j, m, n;  // max - maximal cell value in array a, numb - number of biggest cells, shoot_cell - cell, chosen for shoot
@@ -247,7 +257,7 @@ int AI_shoot(int p_foxleft)  // Function works with AI shots
 	}
 	else
 	{
-		p2[m][n] = find_fox(p2, m, n);
+		p2[m][n] = find_fox(p2, m, n, -3);
 		add_value_a(m, n);
 	}
 	if (p2[m][n] == 0) p2[m][n] = -10;  // If there is no one foxes in string, column and diagonals, we still need to mark the cell that player shooted here
@@ -259,7 +269,7 @@ int AI_shoot(int p_foxleft)  // Function works with AI shots
 
 
 void print(int p1[10][10], int p2[10][10])  // Printing of fields
-// F - Fox, T - Tree, X - fox body, . - closed cell, 0 - fox_number - number of foxes in string, column and diagonals
+											// F - Fox, T - Tree, X - fox body, . - closed cell, 0 - fox_number - number of foxes in string, column and diagonals
 {
 	int i, j, x;
 	printf("Opponent:                   You:\n");
